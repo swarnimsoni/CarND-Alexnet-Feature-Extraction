@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.misc import imread
 from alexnet import AlexNet
-
+import matplotlib.pyplot as plt
 sign_names = pd.read_csv('signnames.csv')
 nb_classes = 43
 
@@ -19,17 +19,29 @@ fc7 = AlexNet(resized, feature_extract=True)
 # HINT: Look at the final layer definition in alexnet.py to get an idea of what this
 # should look like.
 shape = (fc7.get_shape().as_list()[-1], nb_classes)  # use this shape for the weight matrix
-probs = ...
+
+weight_last_layer = tf.Variable(tf.truncated_normal(shape, mean=0, stddev=0.1))
+biases_last_layer = tf.Variable(tf.zeros(nb_classes))
+probs = tf.nn.softmax(tf.matmul(fc7,weight_last_layer )+biases_last_layer)
 
 init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
 # Read Images
-im1 = imread("construction.jpg").astype(np.float32)
+#display the figure
+im1 = imread("construction.jpg")
+plt.figure()
+plt.imshow(im1)
+
+im1= im1.astype(np.float32)
 im1 = im1 - np.mean(im1)
 
-im2 = imread("stop.jpg").astype(np.float32)
+im2 = imread("stop.jpg")
+plt.figure()
+plt.imshow(im2)
+
+im2=im2.astype(np.float32)
 im2 = im2 - np.mean(im2)
 
 # Run Inference
